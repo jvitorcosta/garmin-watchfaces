@@ -1,0 +1,9 @@
+# Build output and generated resources
+*/bin/
+pokeface/resources/gen/
+# Downloaded sources for the Pokéface generator
+pokefont-src/
+# Secrets (Connect IQ keys and per-device secrets) — never commit
+*.der
+*/source/Secrets.mc
+__pycache__/
