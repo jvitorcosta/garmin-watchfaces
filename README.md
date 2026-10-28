@@ -24,7 +24,7 @@ To install it, copy the `.prg` into the watch's `GARMIN/APPS` folder over USB, t
 
 ## History
 
-Pokéface began in [jvitorcosta/spotify-car-deck](https://github.com/jvitorcosta/spotify-car-deck) and moved here with its git history on 2026-10-28. Its design notes are in [`docs/`](docs).
+Pokéface began in [jvitorcosta/car-cyberdeck](https://github.com/jvitorcosta/car-cyberdeck) and moved here with its git history on 2026-10-28. Its design notes are in [`docs/`](docs).
 
 ## Credits
 
