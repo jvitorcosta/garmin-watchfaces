@@ -2,6 +2,8 @@
 
 João's Connect IQ watch faces for the Forerunner 255.
 
+<img src="docs/images/pokeface-fr255.jpg" alt="Pokéface on a Forerunner 255: Rayquaza in an Emerald battle box under the time, weather and steps" width="360">
+
 | Face | What it shows |
 |---|---|
 | [`pokeface/`](pokeface) | **Pokéface**: a Pokémon Emerald battle scene with the time, steps and the week's runs |
