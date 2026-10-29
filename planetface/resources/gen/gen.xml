@@ -1,0 +1,17 @@
+<resources>
+<drawables>
+    <bitmap id="Planet0" filename="planet0.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>AA0000</color><color>AA5500</color><color>AA5555</color><color>AAAA00</color><color>AAAA55</color><color>FF5500</color><color>FFAA00</color><color>FFAA55</color><color>FFFF55</color></palette></bitmap>
+    <bitmap id="Planet1" filename="planet1.png" dithering="none"><palette><color>000000</color><color>555500</color><color>555555</color><color>AAAA55</color><color>AAAAAA</color><color>FFFFAA</color><color>FFFFFF</color></palette></bitmap>
+    <bitmap id="Planet2" filename="planet2.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>555555</color><color>AA0000</color><color>AA5500</color><color>AA5555</color><color>AAAA55</color><color>AAAAAA</color><color>FF5500</color><color>FF5555</color><color>FFAA55</color></palette></bitmap>
+    <bitmap id="Planet3" filename="planet3.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>555555</color><color>AA5555</color><color>AAAA55</color><color>AAAAAA</color><color>FFAAAA</color><color>FFFFAA</color></palette></bitmap>
+    <bitmap id="Planet4" filename="planet4.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>555555</color><color>AA0000</color><color>AA5500</color><color>AA5555</color><color>AAAA55</color><color>AAAAAA</color><color>FF5555</color><color>FFAA55</color><color>FFAAAA</color><color>FFFFAA</color><color>FFFFFF</color></palette></bitmap>
+    <bitmap id="Planet5" filename="planet5.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>555555</color><color>AA5500</color><color>AA5555</color><color>AAAA55</color><color>AAAAAA</color><color>FFAA55</color><color>FFAAAA</color><color>FFFFAA</color></palette></bitmap>
+    <bitmap id="Planet6" filename="planet6.png" dithering="none"><palette><color>000000</color><color>550000</color><color>555500</color><color>555555</color><color>AA5555</color><color>AAAA55</color><color>AAAAAA</color><color>FFAA55</color><color>FFAAAA</color><color>FFFFAA</color><color>FFFFFF</color></palette></bitmap>
+    <bitmap id="LauncherIcon" filename="launcher_icon.png"/>
+</drawables>
+<fonts>
+    <font id="VtTime" filename="vt_time.fnt" antialias="false"/>
+    <font id="VtSmall" filename="vt_small.fnt" antialias="false"/>
+    <font id="VtTiny" filename="vt_tiny.fnt" antialias="false"/>
+</fonts>
+</resources>
