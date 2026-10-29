@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- Planet face: the body today's weekday is named after (Sunday the Sun ... Saturday Saturn) rising
+     from the bottom of the screen, under a mission-control readout: days since Apollo 11, light
+     delay and distance to that body, battery as fuel, steps along the planet's edge.
+     Spec: docs/specs/2026-10-26-planetface-design.md -->
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="0ecfe2d1fcba44caabca7020343edc48" type="watchface" name="@Strings.AppName"
+                    entry="PlanetApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="4.2.0">
+        <iq:products>
+            <iq:product id="fr255"/>
+            <iq:product id="fr255m"/>
+        </iq:products>
+        <iq:permissions/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>
