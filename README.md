@@ -1,6 +1,8 @@
 # Garmin watch faces
 
-João's Connect IQ watch faces for the Forerunner 255.
+My Connect IQ watch faces for the Garmin Forerunner 255.
+
+**Status:** experiment
 
 <img src="docs/images/pokeface-fr255.jpg" alt="Pokéface on a Forerunner 255: Rayquaza in an Emerald battle box under the time, weather and steps" width="360">
 
@@ -8,6 +10,10 @@ João's Connect IQ watch faces for the Forerunner 255.
 |---|---|
 | [`pokeface/`](pokeface) | **Pokéface**: a Pokémon Emerald battle scene with the time, steps and the week's runs |
 | [`planetface/`](planetface) | **Planet of the Day**: the body each weekday is named after (Sunday the Sun … Saturday Saturn) under a mission-control readout: days since Apollo 11, live light delay and distance, battery, steps |
+
+## Why I built them
+
+I wanted faces of my own for my Forerunner 255, ones that make my runs part of the game. I sideload them onto my own watch and don't publish them to the Connect IQ Store.
 
 ## Build
 
@@ -34,6 +40,10 @@ To install a face, copy the `.prg` into the watch's `GARMIN/APPS` folder over US
 ## History
 
 Pokéface began in [jvitorcosta/car-cyberdeck](https://github.com/jvitorcosta/car-cyberdeck) and moved here with its git history on 2026-10-28. Planet of the Day was prototyped there too and moved here before its first commit. Design notes for both are in [`docs/`](docs).
+
+## License
+
+[MIT](LICENSE).
 
 ## Credits
 
