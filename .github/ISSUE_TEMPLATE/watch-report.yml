@@ -1,0 +1,25 @@
+name: Watch report
+description: Tell us how a face worked on your watch
+labels: ["watch report"]
+body:
+  - type: dropdown
+    id: face
+    attributes:
+      label: Face
+      options: [Pokéface, Planet of the Day]
+    validations:
+      required: true
+  - type: input
+    id: watch
+    attributes:
+      label: Watch model and firmware
+      placeholder: Forerunner 255, 21.19
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What worked, and what didn't
+      description: A photo of the watch helps a lot.
+    validations:
+      required: true
