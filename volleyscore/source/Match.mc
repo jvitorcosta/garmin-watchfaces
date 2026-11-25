@@ -1,5 +1,5 @@
 // Volleyball match state. The match is an event log (0 = point Left, 1 = point Right, 2 = serve
-// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 16..40 = set goal 1..25 (8..15 were an older goal list and are ignored)); everything else is replayed from it, so
+// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 41..45 = sets to win 1..5, 16..40 = set goal 1..25 (8..15 were an older goal list and are ignored)); everything else is replayed from it, so
 // undo is just "drop the last event".
 // Tie-break rule (cap): 0 = win by 2, no limit. 1 = sudden death: at target-1 all the next point
 // wins. 2 / 3 = a hard cap: the first to reach target+1 / target+2 wins (so the tie-break lasts at
@@ -7,7 +7,8 @@
 import Toybox.Lang;
 
 class Match {
-    static const SETS_TO_WIN = 3;
+    static const DEFAULT_SETS_TO_WIN = 3;
+    static const MAX_SETS_TO_WIN = 5;
     static const MAX_EVENTS = 400;
     static const MAX_GOAL = 25;
     static const DEFAULT_GOAL = 10;
@@ -23,6 +24,8 @@ class Match {
     var goal as Number = 10;     // points to win a set (1..25, 10 by default)
     var setLog as Array<Number> = [] as Array<Number>;  // who scored each point of the set in play
     var goalChosen as Boolean = false;
+    var setsToWin as Number = 3;  // sets a team needs to win the match (1..5, 3 by default)
+    var setsChosen as Boolean = false;
 
     function initialize() {
         replay();
@@ -30,8 +33,8 @@ class Match {
 
     // Points needed to win the set being played: the chosen goal (25 by default), or at most 15 in
     // the deciding set.
-    static function target(setsA as Number, setsB as Number, goal as Number) as Number {
-        return (setsA + setsB == 2 * SETS_TO_WIN - 2 && goal > 15) ? 15 : goal;
+    static function target(setsA as Number, setsB as Number, goal as Number, toWin as Number) as Number {
+        return (toWin > 1 && setsA + setsB == 2 * toWin - 2 && goal > 15) ? 15 : goal;
     }
 
     // A set is won at the target with a two-point lead; with a cap n > 0 it is also won by whoever
@@ -61,7 +64,7 @@ class Match {
     }
 
     function currentTarget() as Number {
-        return Match.target(sets[0], sets[1], goal);
+        return Match.target(sets[0], sets[1], goal, setsToWin);
     }
 
     function setNumber() as Number {
@@ -94,6 +97,14 @@ class Match {
         }
     }
 
+    function setSetsToWin(n as Number) as Void {
+        if (n >= 1 && n <= MAX_SETS_TO_WIN && events.size() < MAX_EVENTS) {
+            events.add(40 + n);
+            setsToWin = n;
+            setsChosen = true;
+        }
+    }
+
     function setServe(team as Number) as Void {
         if (events.size() < MAX_EVENTS) {
             events.add(2 + team);
@@ -117,12 +128,17 @@ class Match {
         var chosen = capChosen;
         var gKeep = goal;
         var gChosen = goalChosen;
+        var sKeep = setsToWin;
+        var sChosen = setsChosen;
         events = [] as Array<Number>;
         if (chosen) {
             events.add(4 + keep);
         }
         if (gChosen) {
             events.add(15 + gKeep);
+        }
+        if (sChosen) {
+            events.add(40 + sKeep);
         }
         replay();
     }
@@ -137,11 +153,16 @@ class Match {
         cap = 0;
         capChosen = false;
         goal = DEFAULT_GOAL;
+        setsToWin = DEFAULT_SETS_TO_WIN;
+        setsChosen = false;
         setLog = [] as Array<Number>;
         goalChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
-            if (e >= 16) {
+            if (e >= 41) {
+                setsToWin = e - 40;
+                setsChosen = true;
+            } else if (e >= 16) {
                 goal = e - 15;
                 goalChosen = true;
             } else if (e >= 8) {
@@ -169,7 +190,7 @@ class Match {
         sets[winner] = sets[winner] + 1;
         pts = [0, 0] as Array<Number>;
         setLog = [] as Array<Number>;
-        if (sets[winner] >= SETS_TO_WIN) {
+        if (sets[winner] >= setsToWin) {
             over = true;
             return 2;
         }
@@ -186,7 +207,7 @@ class Match {
         if (ok) {
             for (var i = 0; i < data.size(); i++) {
                 var v = data[i];
-                if (!(v instanceof Number) || v < 0 || v > 40) {
+                if (!(v instanceof Number) || v < 0 || v > 45) {
                     ok = false;
                     break;
                 }

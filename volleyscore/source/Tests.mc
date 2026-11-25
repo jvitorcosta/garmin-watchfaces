@@ -224,3 +224,27 @@ function testSetLog(logger as Test.Logger) as Boolean {
     Test.assertEqual(m.setLog.size(), 0);
     return true;
 }
+
+(:test)
+function testSetsToWin(logger as Test.Logger) as Boolean {
+    var m = new Match();
+    Test.assertEqual(m.setsToWin, 3);          // default
+    m.setSetsToWin(1);
+    m.setGoal(25);
+    Test.assertEqual(m.currentTarget(), 25);   // a single set is played to the full goal
+    addPoints(m, 0, 25);
+    Test.assert(m.over);                       // one set ends the match
+    m.reset();
+    Test.assertEqual(m.setsToWin, 1);          // a new match keeps it, and clears the score
+    Test.assert(!m.over);
+    Test.assertEqual(m.sets[0], 0);
+    m.setSetsToWin(5);                         // first to 5; the 9th set is the deciding one
+    m.setSetsToWin(9);                         // out of range: ignored
+    Test.assertEqual(m.setsToWin, 5);
+    for (var i = 0; i < 4; i++) {
+        addPoints(m, 0, 25);
+        addPoints(m, 1, 25);
+    }
+    Test.assertEqual(m.currentTarget(), 15);
+    return true;
+}

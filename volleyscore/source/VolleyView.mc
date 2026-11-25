@@ -108,12 +108,15 @@ class VolleyView extends WatchUi.View {
         var h = dc.getHeight();
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
-        for (var i = 0; i < Match.SETS_TO_WIN; i++) {
-            var x = cx + (i - 1) * 22;
+        var n = match.setsToWin;
+        var step = n > 3 ? 7 : 11;          // half the distance between dots
+        var rad = n > 3 ? 5 : 7;
+        for (var i = 0; i < n; i++) {
+            var x = cx + (i * 2 - (n - 1)) * step;
             if (i < match.sets[team]) {
-                dc.fillCircle(x, h * 32 / 100, 7);
+                dc.fillCircle(x, h * 32 / 100, rad);
             } else {
-                dc.drawCircle(x, h * 32 / 100, 7);
+                dc.drawCircle(x, h * 32 / 100, rad);
             }
         }
         // A dark outline around the white digits keeps them readable on any amount of fill.

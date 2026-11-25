@@ -58,6 +58,7 @@ function pushMatchMenu(match as Match) as Void {
     menu.addItem(new MenuRow(:serveUs, "Serve blue", null, VolleyView.BLUE, match.serve == 0));
     menu.addItem(new MenuRow(:serveThem, "Serve red", null, VolleyView.RED, match.serve == 1));
     menu.addItem(new MenuRow(:goal, "Points to win", "" + match.goal, null, false));
+    menu.addItem(new MenuRow(:setsToWin, "Sets to win", "" + match.setsToWin, null, false));
     menu.addItem(new MenuRow(:tieBreak, "Tie-break", Match.capLabel(match.cap), null, false));
     menu.addItem(new MenuRow(:newMatch, "New match", null, null, false));
     WatchUi.pushView(menu, new VolleyMenuDelegate(match), WatchUi.SLIDE_UP);
@@ -115,7 +116,7 @@ class WheelView extends WatchUi.View {
         dc.fillPolygon([[w / 2 - 9, h * 20 / 100], [w / 2 + 9, h * 20 / 100], [w / 2, h * 16 / 100]]);
         dc.fillPolygon([[w / 2 - 9, h * 80 / 100], [w / 2 + 9, h * 80 / 100], [w / 2, h * 84 / 100]]);
 
-        if (kind == :goal) {
+        if (kind != :cap) {
             // Big digits with a dark outline, like on the scoreboard.
             var o = [[-3, 0], [3, 0], [0, -3], [0, 3]];
             dc.setColor(0x2E9BFF, Graphics.COLOR_TRANSPARENT);
@@ -167,6 +168,10 @@ class WheelDelegate extends WatchUi.BehaviorDelegate {
             if (n + 1 != match.goal) {
                 match.setGoal(n + 1);
             }
+        } else if (view.kind == :sets) {
+            if (n + 1 != match.setsToWin) {
+                match.setSetsToWin(n + 1);
+            }
         } else if (n != match.cap || !match.capChosen) {
             match.setCap(n);
         }
@@ -189,6 +194,14 @@ function pushGoalPicker(match as Match) as Void {
         l.add("" + i);
     }
     pushWheel(match, :goal, "POINTS TO WIN", l, match.goal - 1);
+}
+
+function pushSetsPicker(match as Match) as Void {
+    var l = [] as Array<String>;
+    for (var i = 1; i <= Match.MAX_SETS_TO_WIN; i++) {
+        l.add("" + i);
+    }
+    pushWheel(match, :sets, "SETS TO WIN", l, match.setsToWin - 1);
 }
 
 function pushCapPicker(match as Match) as Void {

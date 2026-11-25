@@ -48,6 +48,12 @@ class VolleyDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function score(team as Number) as Boolean {
+        if (match.over) {
+            // The match is finished: a point button asks whether to start the next one.
+            WatchUi.pushView(new WatchUi.Confirmation("New match?"), new NewMatchConfirm(match, 0),
+                             WatchUi.SLIDE_UP);
+            return true;
+        }
         var r = match.point(team);
         if (r >= 0) {
             buzz(r);
@@ -83,10 +89,12 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId();
         if (id == :newMatch) {
-            WatchUi.pushView(new WatchUi.Confirmation("New match?"), new NewMatchConfirm(match),
+            WatchUi.pushView(new WatchUi.Confirmation("New match?"), new NewMatchConfirm(match, 1),
                              WatchUi.SLIDE_UP);
         } else if (id == :goal) {
             pushGoalPicker(match);
+        } else if (id == :setsToWin) {
+            pushSetsPicker(match);
         } else if (id == :tieBreak) {
             pushCapPicker(match);
         } else {
@@ -99,17 +107,22 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
 
 class NewMatchConfirm extends WatchUi.ConfirmationDelegate {
     var match as Match;
+    var pops as Number;   // views to close under the dialog (the menu), if any
 
-    function initialize(m as Match) {
+    function initialize(m as Match, p as Number) {
         ConfirmationDelegate.initialize();
         match = m;
+        pops = p;
     }
 
     function onResponse(response as WatchUi.Confirm) as Boolean {
         if (response == WatchUi.CONFIRM_YES) {
             match.reset();
             (Application.getApp() as VolleyApp).save();
-            WatchUi.popView(WatchUi.SLIDE_DOWN); // the menu underneath the dialog
+            for (var i = 0; i < pops; i++) {
+                WatchUi.popView(WatchUi.SLIDE_DOWN);   // the menu underneath the dialog
+            }
+            WatchUi.requestUpdate();
         }
         return true;
     }
