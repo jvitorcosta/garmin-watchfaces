@@ -48,7 +48,7 @@ monkeydo volleyscore/bin/VolleyTest.prg fr255 /t
 
 1. Connect the watch over USB.
 2. Copy `volleyscore/bin/VolleyScore.prg` into the watch's `GARMIN/APPS` folder.
-3. Unplug the watch. Volleyball Score shows up (with a pixel volleyball icon) in the app list (START, then scroll to it).
+3. Unplug the watch. Volleyball Score shows up (with a pixel beach volleyball icon) in the app list (START, then scroll to it).
 
 ## How it works
 
