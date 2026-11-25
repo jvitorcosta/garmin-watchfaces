@@ -113,3 +113,31 @@ function testStorageRoundTrip(logger as Test.Logger) as Boolean {
     Test.assertEqual(n.events.size(), 0);
     return true;
 }
+
+(:test)
+function testTieBreakCaps(logger as Test.Logger) as Boolean {
+    Test.assert(!Match.setWon(25, 24, 25, 0));
+    Test.assert(Match.setWon(26, 24, 25, 0));
+    Test.assert(!Match.setWon(24, 24, 25, 1));
+    Test.assert(Match.setWon(25, 24, 25, 1));      // sudden death
+    Test.assert(!Match.setWon(25, 25, 25, 2));
+    Test.assert(Match.setWon(26, 25, 25, 2));      // first to 26
+    Test.assert(!Match.setWon(26, 26, 25, 3));
+    Test.assert(Match.setWon(27, 26, 25, 3));      // first to 27
+    return true;
+}
+
+(:test)
+function testTieBreakIsLogged(logger as Test.Logger) as Boolean {
+    var m = new Match();
+    m.setCap(1);
+    tie(m, 24);                                    // 24-24
+    Test.assertEqual(m.point(0), 1);               // next point wins the set
+    m.undo();
+    Test.assertEqual(m.sets[0], 0);
+    m.undo();
+    m.undo();
+    m.reset();
+    Test.assertEqual(m.cap, 1);                    // a new match keeps the rule
+    return true;
+}

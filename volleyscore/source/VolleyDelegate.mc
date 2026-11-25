@@ -35,9 +35,9 @@ class VolleyDelegate extends WatchUi.BehaviorDelegate {
         var key = evt.getKey();
         if (key == WatchUi.KEY_UP) {
             return score(0);
-        } else if (key == WatchUi.KEY_DOWN) {
-            return score(1);
         } else if (key == WatchUi.KEY_ENTER) {
+            return score(1);
+        } else if (key == WatchUi.KEY_DOWN) {
             if (match.undo()) {
                 buzz(0);
                 changed();
@@ -63,8 +63,9 @@ class VolleyDelegate extends WatchUi.BehaviorDelegate {
 
     function onMenu() as Boolean {
         var menu = new WatchUi.Menu2({:title => "Match"});
-        menu.addItem(new WatchUi.MenuItem("Serve: Us", null, :serveUs, {}));
-        menu.addItem(new WatchUi.MenuItem("Serve: Them", null, :serveThem, {}));
+        menu.addItem(new WatchUi.MenuItem("Serve: Blue", null, :serveUs, {}));
+        menu.addItem(new WatchUi.MenuItem("Serve: Red", null, :serveThem, {}));
+        menu.addItem(new WatchUi.MenuItem("Tie-break", Match.capLabel(match.cap), :tieBreak, {}));
         menu.addItem(new WatchUi.MenuItem("New match", null, :newMatch, {}));
         WatchUi.pushView(menu, new VolleyMenuDelegate(match), WatchUi.SLIDE_UP);
         return true;
@@ -84,6 +85,14 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
         if (id == :newMatch) {
             WatchUi.pushView(new WatchUi.Confirmation("New match?"), new NewMatchConfirm(match),
                              WatchUi.SLIDE_UP);
+            return;
+        }
+        if (id == :tieBreak) {
+            var menu = new WatchUi.Menu2({:title => "Tie-break"});
+            for (var n = 0; n < 4; n++) {
+                menu.addItem(new WatchUi.MenuItem(Match.capLabel(n), n == match.cap ? "current" : null, n, {}));
+            }
+            WatchUi.pushView(menu, new TieBreakDelegate(match), WatchUi.SLIDE_UP);
             return;
         }
         match.setServe(id == :serveUs ? 0 : 1);
@@ -107,5 +116,22 @@ class NewMatchConfirm extends WatchUi.ConfirmationDelegate {
             WatchUi.popView(WatchUi.SLIDE_DOWN); // the menu underneath the dialog
         }
         return true;
+    }
+}
+
+class TieBreakDelegate extends WatchUi.Menu2InputDelegate {
+    var match as Match;
+
+    function initialize(m as Match) {
+        Menu2InputDelegate.initialize();
+        match = m;
+    }
+
+    function onSelect(item as WatchUi.MenuItem) as Void {
+        match.setCap(item.getId() as Number);
+        (Application.getApp() as VolleyApp).save();
+        WatchUi.popView(WatchUi.SLIDE_DOWN);
+        WatchUi.popView(WatchUi.SLIDE_DOWN); // and the match menu
+        WatchUi.requestUpdate();
     }
 }
