@@ -248,3 +248,19 @@ function testSetsToWin(logger as Test.Logger) as Boolean {
     Test.assertEqual(m.currentTarget(), 15);
     return true;
 }
+
+(:test)
+function testMaxPlusThree(logger as Test.Logger) as Boolean {
+    Test.assert(!Match.setWon(27, 27, 25, 4));
+    Test.assert(Match.setWon(28, 27, 25, 4));      // first to 28
+    Test.assert(Match.setWon(27, 25, 25, 4));      // a two-point lead still wins
+    var m = to25();
+    m.setCap(4);
+    Test.assertEqual(m.cap, 4);
+    var n = new Match();
+    n.load(m.toStorage());
+    Test.assertEqual(n.cap, 4);                    // survives saving
+    n.reset();
+    Test.assertEqual(n.cap, 4);                    // and a new match
+    return true;
+}
