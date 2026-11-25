@@ -1,5 +1,5 @@
 // Full-screen result when the match ends: the winner's colour, a trophy, confetti, the set score.
-// START or BACK goes back to the scoreboard; DOWN takes the last point back.
+// START starts a new match; DOWN takes the last point back; BACK returns to the finished scoreboard.
 import Toybox.Application;
 import Toybox.Graphics;
 import Toybox.Lang;
@@ -38,10 +38,13 @@ class WinnerView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(w / 2, h * 51 / 100, titleFont, blue ? "BLUE" : "RED",
                     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(w / 2, h * 73 / 100, labelFont, "WINS THE MATCH",
+        dc.drawText(w / 2, h * 70 / 100, labelFont, "WINS THE MATCH",
                     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(w / 2, h * 85 / 100, labelFont,
+        dc.drawText(w / 2, h * 80 / 100, labelFont,
                     "SETS " + match.sets[0] + " - " + match.sets[1],
+                    Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(w / 2, h * 91 / 100, Graphics.FONT_XTINY, "START: new match",
                     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
@@ -91,10 +94,12 @@ class WinnerDelegate extends WatchUi.BehaviorDelegate {
     function onKey(evt as WatchUi.KeyEvent) as Boolean {
         if (evt.getKey() == WatchUi.KEY_DOWN) {
             match.undo();
-            (Application.getApp() as VolleyApp).save();
-        } else if (evt.getKey() != WatchUi.KEY_ENTER) {
+        } else if (evt.getKey() == WatchUi.KEY_ENTER) {
+            match.reset();
+        } else {
             return false;
         }
+        (Application.getApp() as VolleyApp).save();
         WatchUi.popView(WatchUi.SLIDE_DOWN);
         return true;
     }
