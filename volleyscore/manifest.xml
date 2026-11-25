@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Volley Score: a volleyball scoreboard for the Forerunner 255 (sets to 25, fifth to 15, win by 2).
+     Sideloaded only. -->
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="3c2f6a1e9b7d4e5a8f10c4d2a6b9e731" type="watch-app" name="@Strings.AppName"
+                    entry="VolleyApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="4.2.0">
+        <iq:products>
+            <iq:product id="fr255"/>
+            <iq:product id="fr255m"/>
+        </iq:products>
+        <iq:permissions/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>

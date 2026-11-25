@@ -11,6 +11,12 @@ My Connect IQ watch faces for the Garmin Forerunner 255.
 | [`pokeface/`](pokeface) | **Pokéface**: a Pokémon Emerald battle scene with the time, steps and the week's runs |
 | [`planetface/`](planetface) | **Planet of the Day**: the body each weekday is named after (Sunday the Sun … Saturday Saturn) under a mission-control readout: days since Apollo 11, live light delay and distance, battery, steps |
 
+There is also an app, not a face:
+
+| App | What it does |
+|---|---|
+| [`volleyscore/`](volleyscore) | **Volley Score**: a volleyball scoreboard (sets to 25, fifth to 15, win by 2) with set tally, undo, serve marker and haptics; it keeps the score if you leave the app |
+
 ## Why I built them
 
 I wanted faces of my own for my Forerunner 255, ones that make my runs part of the game. I sideload them onto my own watch and don't publish them to the Connect IQ Store.
