@@ -177,16 +177,16 @@ function testTieBreakAskInDecidingSet(logger as Test.Logger) as Boolean {
 (:test)
 function testSetGoal(logger as Test.Logger) as Boolean {
     var m = new Match();
-    m.setGoal(0);                         // sets to 10
-    Test.assertEqual(m.currentTarget(), 10);
-    addPoints(m, 0, 10);
-    Test.assertEqual(m.sets[0], 1);       // won at 10-0
-    Test.assertEqual(m.currentTarget(), 10);
-    for (var u = 0; u < 11; u++) {
-        m.undo();                         // 10 points, then the goal change itself
+    m.setGoal(0);                         // sets to 7
+    Test.assertEqual(m.currentTarget(), 7);
+    addPoints(m, 0, 7);
+    Test.assertEqual(m.sets[0], 1);       // won at 7-0
+    Test.assertEqual(m.currentTarget(), 7);
+    for (var u = 0; u < 8; u++) {
+        m.undo();                         // 7 points, then the goal change itself
     }
     Test.assertEqual(m.currentTarget(), 25);
-    m.setGoal(2);                         // 21, deciding set still 15
+    m.setGoal(4);                         // 21, deciding set 15
     for (var i = 0; i < 2; i++) {
         addPoints(m, 0, 21);
         addPoints(m, 1, 21);
@@ -194,7 +194,7 @@ function testSetGoal(logger as Test.Logger) as Boolean {
     Test.assertEqual(m.currentTarget(), 15);
     m.reset();
     Test.assertEqual(m.currentTarget(), 21);   // a new match keeps the goal
-    m.setGoal(1);                         // sets to 15, deciding set 15 too
-    Test.assertEqual(m.currentTarget(), 15);
+    m.setGoal(2);                         // sets to 12, deciding set 12 too
+    Test.assertEqual(m.currentTarget(), 12);
     return true;
 }

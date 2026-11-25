@@ -1,5 +1,5 @@
 // Volleyball match state. The match is an event log (0 = point Left, 1 = point Right, 2 = serve
-// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 8..11 = set goal 0..3); everything else is replayed from it, so
+// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 8..13 = set goal 0..5); everything else is replayed from it, so
 // undo is just "drop the last event".
 // Tie-break rule (cap): 0 = win by 2, no limit. 1 = sudden death: at target-1 all the next point
 // wins. 2 / 3 = a hard cap: the first to reach target+1 / target+2 wins (so the tie-break lasts at
@@ -9,7 +9,7 @@ import Toybox.Lang;
 class Match {
     static const SETS_TO_WIN = 3;
     static const MAX_EVENTS = 400;
-    static const GOALS = [10, 15, 21, 25] as Array<Number>;   // points to win a set
+    static const GOALS = [7, 10, 12, 18, 21, 25] as Array<Number>;   // points to win a set
 
     var events as Array<Number> = [] as Array<Number>;
     var pts as Array<Number> = [0, 0] as Array<Number>;   // current set points [Left, Right]
@@ -19,7 +19,7 @@ class Match {
     var over as Boolean = false;
     var cap as Number = 0;       // tie-break rule in force (0 = win by 2 only)
     var capChosen as Boolean = false; // a rule was picked this match, so don't ask again
-    var goalIdx as Number = 3;   // index into GOALS (25 by default)
+    var goalIdx as Number = 5;   // index into GOALS (25 by default)
     var goalChosen as Boolean = false;
 
     function initialize() {
@@ -134,7 +134,7 @@ class Match {
         over = false;
         cap = 0;
         capChosen = false;
-        goalIdx = 3;
+        goalIdx = 5;
         goalChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
@@ -179,7 +179,7 @@ class Match {
         if (ok) {
             for (var i = 0; i < data.size(); i++) {
                 var v = data[i];
-                if (!(v instanceof Number) || v < 0 || v > 11) {
+                if (!(v instanceof Number) || v < 0 || v > 13) {
                     ok = false;
                     break;
                 }
