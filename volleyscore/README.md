@@ -4,7 +4,7 @@ A volleyball scoreboard for the Forerunner 255. Sideloaded only, not published t
 
 ![Volley Score in the Forerunner 255 simulator](../docs/images/volleyscore-sim.png)
 
-- Split screen: light blue on the left, red on the right, big white points; three dots above each score are the sets won (filled = won).
+- Split screen: each team's half fills with its colour (light blue left, red right) as it scores, in proportion to the points needed to win the set, with a thin strip showing who is who at 0-0. Big white points, and three dots above each score are the sets won (filled = won). A white ribbon on top shows the set and the score that wins it.
 - Sets go to 25, the fifth to 15; first to 3 sets wins the match.
 - Tie-break (menu): **Win by 2** (default), **Sudden death** (tied one point short of the target, the next point wins), **Max +1** (first to target + 1) or **Max +2** (first to target + 2). It applies from that point on and a new match keeps the choice.
 - The serve marker (small white ball under the score) follows the team that scored the last point; change it from the menu.
@@ -48,4 +48,4 @@ monkeydo volleyscore/bin/VolleyTest.prg fr255 /t
 
 ## How it works
 
-`Match.mc` keeps the match as a list of events (point left, point right, serve change, tie-break rule) and replays it to get the score, so undo is just dropping the last event and the saved state is that list. `VolleyView.mc` draws it, `VolleyDelegate.mc` handles the buttons, menu and haptics.
+`Match.mc` keeps the match as a list of events (point left, point right, serve change, tie-break rule) and replays it to get the score, so undo is just dropping the last event and the saved state is that list. `VolleyView.mc` draws it (the Bebas Neue fonts are built by `python tools/gen_volleyscore.py` and committed in `resources/gen/`), `VolleyDelegate.mc` handles the buttons, menu and haptics.

@@ -1,0 +1,6 @@
+<resources>
+<fonts>
+    <font id="BebasScore" filename="bebas_score.fnt" antialias="true"/>
+    <font id="BebasLabel" filename="bebas_label.fnt" antialias="true"/>
+</fonts>
+</resources>
