@@ -8,7 +8,7 @@ class VolleyView extends WatchUi.View {
     static const RED = 0xE5343A;
     static const BLUE_DARK = 0x0B2540;
     static const RED_DARK = 0x3A1215;
-    static const BASE = 0.20;
+    static const BASE = 0.08;
 
     var match as Match;
     var scoreFont as WatchUi.FontResource?;
@@ -97,8 +97,17 @@ class VolleyView extends WatchUi.View {
                 dc.drawCircle(x, h * 32 / 100, 7);
             }
         }
-        dc.drawText(cx, h * 53 / 100, scoreFont, match.pts[team].toString(),
-                    Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        // A dark outline around the white digits keeps them readable on any amount of fill.
+        var txt = match.pts[team].toString();
+        var dark = team == 0 ? BLUE_DARK : RED_DARK;
+        var just = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
+        dc.setColor(dark, Graphics.COLOR_TRANSPARENT);
+        var o = [[-3, 0], [3, 0], [0, -3], [0, 3], [-2, -2], [2, -2], [-2, 2], [2, 2]];
+        for (var k = 0; k < o.size(); k++) {
+            dc.drawText(cx + o[k][0], h * 53 / 100 + o[k][1], scoreFont, txt, just);
+        }
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(cx, h * 53 / 100, scoreFont, txt, just);
         if (match.serve == team && !match.over) {
             dc.fillCircle(cx, h * 77 / 100, 9);
             dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);

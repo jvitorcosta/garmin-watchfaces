@@ -15,7 +15,7 @@ There is also an app, not a face:
 
 | App | What it does |
 |---|---|
-| [`volleyscore/`](volleyscore) | **Volley Score**: a volleyball scoreboard (sets to 25, fifth to 15, win by 2) split blue/red screen with set tally, undo, serve marker, tie-break rules and haptics; it keeps the score if you leave the app |
+| [`volleyscore/`](volleyscore) | **Volleyball Score**: a volleyball scoreboard (sets to 25 or another goal, fifth to 15, win by 2) split blue/red screen with set tally, undo, serve marker, tie-break rules and haptics; it keeps the score if you leave the app |
 
 ## Why I built them
 
@@ -57,4 +57,4 @@ The Pokémon sprites and the Emerald font are Nintendo / Game Freak / Creatures 
 
 Planet of the Day's planets are original drawings made by `tools/gen_planetface.py`. Its font is [VT323](https://fonts.google.com/specimen/VT323) (© The VT323 Project Authors), under the SIL Open Font License ([`tools/fonts/VT323-OFL.txt`](tools/fonts/VT323-OFL.txt)).
 
-Volley Score's font is [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) (© 2010 Dharma Type), under the SIL Open Font License ([`tools/fonts/BebasNeue-OFL.txt`](tools/fonts/BebasNeue-OFL.txt)).
+Volleyball Score's font is [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) (© 2010 Dharma Type), under the SIL Open Font License ([`tools/fonts/BebasNeue-OFL.txt`](tools/fonts/BebasNeue-OFL.txt)).

@@ -70,6 +70,7 @@ class VolleyDelegate extends WatchUi.BehaviorDelegate {
         var menu = new WatchUi.Menu2({:title => "Match"});
         menu.addItem(new WatchUi.MenuItem("Serve: Blue", null, :serveUs, {}));
         menu.addItem(new WatchUi.MenuItem("Serve: Red", null, :serveThem, {}));
+        menu.addItem(new WatchUi.MenuItem("Points to win", "" + Match.GOALS[match.goalIdx], :goal, {}));
         menu.addItem(new WatchUi.MenuItem("Tie-break", Match.capLabel(match.cap), :tieBreak, {}));
         menu.addItem(new WatchUi.MenuItem("New match", null, :newMatch, {}));
         WatchUi.pushView(menu, new VolleyMenuDelegate(match), WatchUi.SLIDE_UP);
@@ -92,6 +93,10 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
                              WatchUi.SLIDE_UP);
             return;
         }
+        if (id == :goal) {
+            pushGoalMenu(match);
+            return;
+        }
         if (id == :tieBreak) {
             pushTieBreakMenu(match, "Tie-break", false, 2);
             return;
@@ -99,6 +104,36 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
         match.setServe(id == :serveUs ? 0 : 1);
         (Application.getApp() as VolleyApp).save();
         WatchUi.popView(WatchUi.SLIDE_DOWN);
+    }
+}
+
+// Points needed to win a set: the choice is logged (so DOWN undoes it) and kept for new matches.
+function pushGoalMenu(match as Match) as Void {
+    var menu = new WatchUi.Menu2({:title => "Points to win"});
+    for (var n = 0; n < Match.GOALS.size(); n++) {
+        var note = n == match.goalIdx ? "current" : (Match.GOALS[n] == 15 ? "also last set" : null);
+        menu.addItem(new WatchUi.MenuItem("" + Match.GOALS[n], note, n, {}));
+    }
+    WatchUi.pushView(menu, new GoalDelegate(match), WatchUi.SLIDE_UP);
+}
+
+class GoalDelegate extends WatchUi.Menu2InputDelegate {
+    var match as Match;
+
+    function initialize(m as Match) {
+        Menu2InputDelegate.initialize();
+        match = m;
+    }
+
+    function onSelect(item as WatchUi.MenuItem) as Void {
+        var n = item.getId() as Number;
+        if (n != match.goalIdx) {
+            match.setGoal(n);
+            (Application.getApp() as VolleyApp).save();
+        }
+        WatchUi.popView(WatchUi.SLIDE_DOWN);   // this menu
+        WatchUi.popView(WatchUi.SLIDE_DOWN);   // the match menu
+        WatchUi.requestUpdate();
     }
 }
 
