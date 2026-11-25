@@ -206,7 +206,7 @@ function pushSetsPicker(match as Match) as Void {
 
 function pushCapPicker(match as Match) as Void {
     var l = [] as Array<String>;
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 5; i++) {
         l.add(Match.capLabel(i));
     }
     pushWheel(match, :cap, "TIE-BREAK", l, match.cap);

@@ -2,7 +2,7 @@
 // Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 41..45 = sets to win 1..5, 16..40 = set goal 1..25 (8..15 were an older goal list and are ignored)); everything else is replayed from it, so
 // undo is just "drop the last event".
 // Tie-break rule (cap): 0 = win by 2, no limit. 1 = sudden death: at target-1 all the next point
-// wins. 2 / 3 = a hard cap: the first to reach target+1 / target+2 wins (so the tie-break lasts at
+// wins. 2 / 3 / 4 = a hard cap: the first to reach target+1 / +2 / +3 wins (so the tie-break lasts at
 // most 2 / 3 more points past the target).
 import Toybox.Lang;
 
@@ -46,6 +46,11 @@ class Match {
         return cap > 0 && (a >= goal + cap - 1 || b >= goal + cap - 1);
     }
 
+    // Log value of tie-break rule n: 4..7 for rules 0..3, 46 for rule 4 (8..45 are other settings).
+    static function capEvent(n as Number) as Number {
+        return n < 4 ? 4 + n : 42 + n;
+    }
+
     static function capLabel(n as Number) as String {
         if (n == 1) {
             return "Sudden death";
@@ -53,6 +58,8 @@ class Match {
             return "Max +1";
         } else if (n == 3) {
             return "Max +2";
+        } else if (n == 4) {
+            return "Max +3";
         }
         return "Win by 2";
     }
@@ -83,7 +90,7 @@ class Match {
 
     function setCap(n as Number) as Void {
         if (events.size() < MAX_EVENTS) {
-            events.add(4 + n);
+            events.add(capEvent(n));
             cap = n;
             capChosen = true;
         }
@@ -132,7 +139,7 @@ class Match {
         var sChosen = setsChosen;
         events = [] as Array<Number>;
         if (chosen) {
-            events.add(4 + keep);
+            events.add(capEvent(keep));
         }
         if (gChosen) {
             events.add(15 + gKeep);
@@ -159,7 +166,10 @@ class Match {
         goalChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
-            if (e >= 41) {
+            if (e >= 46) {
+                cap = e - 42;
+                capChosen = true;
+            } else if (e >= 41) {
                 setsToWin = e - 40;
                 setsChosen = true;
             } else if (e >= 16) {
@@ -207,7 +217,7 @@ class Match {
         if (ok) {
             for (var i = 0; i < data.size(); i++) {
                 var v = data[i];
-                if (!(v instanceof Number) || v < 0 || v > 45) {
+                if (!(v instanceof Number) || v < 0 || v > 46) {
                     ok = false;
                     break;
                 }

@@ -140,8 +140,9 @@ function askTieBreak(match as Match, pops as Number) as Void {
 function pushTieBreakMenu(match as Match, title as String, withUndo as Boolean, pops as Number) as Void {
     var t = match.currentTarget();
     var menu = new WatchUi.Menu2({:title => title});
-    var sub = ["no limit", "next point wins", "first to " + (t + 1), "first to " + (t + 2)];
-    for (var n = 0; n < 4; n++) {
+    var sub = ["no limit", "next point wins", "first to " + (t + 1), "first to " + (t + 2),
+               "first to " + (t + 3)];
+    for (var n = 0; n < 5; n++) {
         var note = sub[n];
         if (!withUndo && n == match.cap) {
             note = "current";
