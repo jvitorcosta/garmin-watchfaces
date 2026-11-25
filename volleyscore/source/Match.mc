@@ -17,6 +17,7 @@ class Match {
     var serve as Number = 0;
     var over as Boolean = false;
     var cap as Number = 0;       // tie-break rule in force (0 = win by 2 only)
+    var capChosen as Boolean = false; // a rule was picked this match, so don't ask again
 
     function initialize() {
         replay();
@@ -47,6 +48,12 @@ class Match {
         return "Win by 2";
     }
 
+    // True right after a set reaches target-1 all while no tie-break rule has been picked yet:
+    // the moment to ask how the tie should be played out.
+    function needsTieBreakAsk() as Boolean {
+        return !over && !capChosen && pts[0] == pts[1] && pts[0] == currentTarget() - 1;
+    }
+
     function currentTarget() as Number {
         return Match.target(sets[0], sets[1]);
     }
@@ -69,6 +76,7 @@ class Match {
         if (events.size() < MAX_EVENTS) {
             events.add(4 + n);
             cap = n;
+            capChosen = true;
         }
     }
 
@@ -92,8 +100,9 @@ class Match {
     // New match; keeps the tie-break rule.
     function reset() as Void {
         var keep = cap;
+        var chosen = capChosen;
         events = [] as Array<Number>;
-        if (keep > 0) {
+        if (chosen) {
             events.add(4 + keep);
         }
         replay();
@@ -107,10 +116,12 @@ class Match {
         serve = 0;
         over = false;
         cap = 0;
+        capChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
             if (e >= 4) {
                 cap = e - 4;
+                capChosen = true;
             } else if (e >= 2) {
                 serve = e - 2;
             } else if (!over) {

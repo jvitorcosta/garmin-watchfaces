@@ -141,3 +141,35 @@ function testTieBreakIsLogged(logger as Test.Logger) as Boolean {
     Test.assertEqual(m.cap, 1);                    // a new match keeps the rule
     return true;
 }
+
+(:test)
+function testTieBreakAskOnce(logger as Test.Logger) as Boolean {
+    var m = new Match();
+    addPoints(m, 0, 23);
+    addPoints(m, 1, 22);
+    Test.assert(!m.needsTieBreakAsk());   // 23-22
+    m.point(1);                           // 23-23: not yet (needs 24-24)
+    Test.assert(!m.needsTieBreakAsk());
+    m.point(0);
+    m.point(1);                           // 24-24
+    Test.assert(m.needsTieBreakAsk());
+    m.setCap(0);                          // chosen: never asked again
+    Test.assert(!m.needsTieBreakAsk());
+    m.reset();
+    Test.assert(m.capChosen);             // a new match keeps the choice
+    return true;
+}
+
+(:test)
+function testTieBreakAskInDecidingSet(logger as Test.Logger) as Boolean {
+    var m = new Match();
+    for (var i = 0; i < 2; i++) {
+        addPoints(m, 0, 25);
+        addPoints(m, 1, 25);
+    }
+    addPoints(m, 0, 14);
+    addPoints(m, 1, 13);
+    m.point(1);                           // 14-14 in a set to 15
+    Test.assert(m.needsTieBreakAsk());
+    return true;
+}

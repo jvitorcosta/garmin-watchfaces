@@ -52,6 +52,11 @@ class VolleyDelegate extends WatchUi.BehaviorDelegate {
         if (r >= 0) {
             buzz(r);
             changed();
+            if (r == 2) {
+                WatchUi.pushView(new WinnerView(match), new WinnerDelegate(match), WatchUi.SLIDE_UP);
+            } else if (r == 0 && match.needsTieBreakAsk()) {
+                askTieBreak(match, 1);
+            }
         }
         return true;
     }
@@ -88,11 +93,7 @@ class VolleyMenuDelegate extends WatchUi.Menu2InputDelegate {
             return;
         }
         if (id == :tieBreak) {
-            var menu = new WatchUi.Menu2({:title => "Tie-break"});
-            for (var n = 0; n < 4; n++) {
-                menu.addItem(new WatchUi.MenuItem(Match.capLabel(n), n == match.cap ? "current" : null, n, {}));
-            }
-            WatchUi.pushView(menu, new TieBreakDelegate(match), WatchUi.SLIDE_UP);
+            pushTieBreakMenu(match, "Tie-break", false, 2);
             return;
         }
         match.setServe(id == :serveUs ? 0 : 1);
@@ -119,19 +120,53 @@ class NewMatchConfirm extends WatchUi.ConfirmationDelegate {
     }
 }
 
+// The scoreboard just reached target-1 all: ask once how the tie is played out. The first item
+// (Win by 2, the usual rule) is already highlighted, so one press carries on; the last item takes
+// the point back in case it was a mistake.
+function askTieBreak(match as Match, pops as Number) as Void {
+    var t = match.currentTarget() - 1;
+    buzz(1);
+    pushTieBreakMenu(match, "Tied " + t + "-" + t, true, pops);
+}
+
+function pushTieBreakMenu(match as Match, title as String, withUndo as Boolean, pops as Number) as Void {
+    var t = match.currentTarget();
+    var menu = new WatchUi.Menu2({:title => title});
+    var sub = ["no limit", "next point wins", "first to " + (t + 1), "first to " + (t + 2)];
+    for (var n = 0; n < 4; n++) {
+        var note = sub[n];
+        if (!withUndo && n == match.cap) {
+            note = "current";
+        }
+        menu.addItem(new WatchUi.MenuItem(Match.capLabel(n), note, n, {}));
+    }
+    if (withUndo) {
+        menu.addItem(new WatchUi.MenuItem("Undo that point", null, :undo, {}));
+    }
+    WatchUi.pushView(menu, new TieBreakDelegate(match, pops), WatchUi.SLIDE_UP);
+}
+
 class TieBreakDelegate extends WatchUi.Menu2InputDelegate {
     var match as Match;
+    var pops as Number;
 
-    function initialize(m as Match) {
+    function initialize(m as Match, p as Number) {
         Menu2InputDelegate.initialize();
         match = m;
+        pops = p;
     }
 
     function onSelect(item as WatchUi.MenuItem) as Void {
-        match.setCap(item.getId() as Number);
+        var id = item.getId();
+        if (id == :undo) {
+            match.undo();
+        } else {
+            match.setCap(id as Number);
+        }
         (Application.getApp() as VolleyApp).save();
-        WatchUi.popView(WatchUi.SLIDE_DOWN);
-        WatchUi.popView(WatchUi.SLIDE_DOWN); // and the match menu
+        for (var i = 0; i < pops; i++) {
+            WatchUi.popView(WatchUi.SLIDE_DOWN);
+        }
         WatchUi.requestUpdate();
     }
 }
