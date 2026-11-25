@@ -1,4 +1,4 @@
-// Volley Score: UP = point Us, DOWN = point Them, START = undo, hold UP = menu, BACK = exit.
+// Volleyball Score: UP = point blue (left), START = point red (right), DOWN = undo, hold UP = menu, BACK = exit.
 // The score is saved after every change, so leaving the app never loses the match.
 import Toybox.Application;
 import Toybox.Application.Storage;

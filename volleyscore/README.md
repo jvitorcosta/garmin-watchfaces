@@ -1,11 +1,11 @@
-# Volley Score
+# Volleyball Score
 
-A volleyball scoreboard for the Forerunner 255. Sideloaded only, not published to the Connect IQ Store.
+A volleyball scoreboard for the Forerunner 255 (app name: Volleyball Score). Sideloaded only, not published to the Connect IQ Store.
 
-![Volley Score in the Forerunner 255 simulator](../docs/images/volleyscore-sim.png) ![Winner screen](../docs/images/volleyscore-winner.png) ![Tie-break prompt](../docs/images/volleyscore-tiebreak.png)
+![Volleyball Score in the Forerunner 255 simulator](../docs/images/volleyscore-sim.png) ![Winner screen](../docs/images/volleyscore-winner.png) ![Tie-break prompt](../docs/images/volleyscore-tiebreak.png)
 
-- Split screen: each team's half fills with its colour (light blue left, red right) as it scores, in proportion to the points needed to win the set, with a thin strip showing who is who at 0-0. Big white points, and three dots above each score are the sets won (filled = won). A white ribbon on top shows the set and the score that wins it.
-- Sets go to 25, the fifth to 15; first to 3 sets wins the match.
+- Split screen: each team's half fills with its colour (light blue left, red right) as it scores, in proportion to the points needed to win the set, with a thin strip showing who is who at 0-0. Big white points with a dark outline for contrast, and three dots above each score are the sets won (filled = won). A white ribbon on top shows the set and the score that wins it.
+- Sets go to 25 by default, the fifth to 15; first to 3 sets wins the match. **Points to win** (hold UP menu) changes the set goal to 10, 15, 21 or 25 (the deciding set is at most 15); the choice is logged, so DOWN undoes it, and a new match keeps it.
 - **Tie ask**: when a set reaches one point short of its target all (24-24, or 14-14 in the fifth), a menu asks once per match how to play it out: Win by 2 (already highlighted, one press and carry on), Sudden death, Max +1, Max +2, or *Undo that point* if the tie was a slip. The choice is remembered, also for the next match, and can be changed in the hold-UP menu.
 - **Winner screen**: when the match ends the whole screen turns the winner's colour with a trophy, confetti and the set score. START or BACK returns to the scoreboard; DOWN takes the last point back.
 - Tie-break rules: **Win by 2** (default), **Sudden death** (tied one point short of the target, the next point wins), **Max +1** (first to target + 1) or **Max +2** (first to target + 2). It applies from that point on and a new match keeps the choice.
@@ -22,7 +22,7 @@ Laid out like the screen: left buttons for the left team, right button for the r
 | UP | point for the **left** (blue) team |
 | START | point for the **right** (red) team |
 | DOWN | undo the last action (as many times as you like, even back into a finished set); on the winner screen it takes the last point back |
-| hold UP | menu: serve blue / serve red / tie-break / new match |
+| hold UP | menu: serve blue / serve red / points to win / tie-break / new match |
 | BACK | leave the app; reopen it and the score is still there |
 
 ## Build
@@ -35,7 +35,7 @@ monkeyc -d fr255 -f volleyscore/monkey.jungle -o volleyscore/bin/VolleyScore.prg
 
 ## Tests
 
-The match rules (set to 25, win by 2, tie-break caps, fifth set to 15, undo across sets, serve, saving) have unit tests in `source/Tests.mc`. Open the simulator (`connectiq`), then:
+The match rules (set goal, win by 2, tie-break caps, fifth set to 15, undo across sets, serve, saving) have unit tests in `source/Tests.mc`. Open the simulator (`connectiq`), then:
 
 ```bash
 monkeyc -d fr255 -f volleyscore/monkey.jungle -o volleyscore/bin/VolleyTest.prg -y <your developer_key.der> --unit-test
@@ -46,7 +46,7 @@ monkeydo volleyscore/bin/VolleyTest.prg fr255 /t
 
 1. Connect the watch over USB.
 2. Copy `volleyscore/bin/VolleyScore.prg` into the watch's `GARMIN/APPS` folder.
-3. Unplug the watch. Volley Score shows up in the app list (START, then scroll to it).
+3. Unplug the watch. Volleyball Score shows up (with a pixel volleyball icon) in the app list (START, then scroll to it).
 
 ## How it works
 

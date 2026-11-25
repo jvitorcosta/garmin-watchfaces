@@ -48,8 +48,37 @@ def gen_xml():
     return "<resources>\n<fonts>\n" + fonts + "\n</fonts>\n</resources>\n"
 
 
+def icon():
+    """The launcher icon: a pixelated volleyball (20 x 20 art, shown at 40 x 40). A white ball with
+    three navy seams, each the edge of a circle of the ball's size shifted in one direction."""
+    n = 20
+    c = (n - 1) / 2.0
+    r = 9.2
+    seams = [(-6.5, 1.0), (6.5, 1.0), (0.0, -7.5)]       # centres of the seam circles, from c
+    img = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    px = img.load()
+    for y in range(n):
+        for x in range(n):
+            dx, dy = x - c, y - c
+            d = (dx * dx + dy * dy) ** 0.5
+            if d > r:
+                continue
+            col = (250, 250, 250, 255)
+            if dx + dy > 6:                               # a little shade bottom right
+                col = (214, 224, 236, 255)
+            for sx, sy in seams:
+                e = (((dx - sx) ** 2 + (dy - sy) ** 2) ** 0.5)
+                if abs(e - 9.6) < 0.75:
+                    col = (24, 74, 150, 255)
+            if d > r - 1.0:
+                col = (12, 38, 84, 255)                   # outline
+            px[x, y] = col
+    return img.resize((40, 40), Image.NEAREST)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    icon().save(os.path.join(ROOT, "volleyscore", "resources", "drawables", "launcher_icon.png"))
     for name, size, chars in FONTS:
         text, page = bmfont(name, size, chars)
         page.save(os.path.join(OUT, name + ".png"))

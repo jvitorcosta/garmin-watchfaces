@@ -1,5 +1,5 @@
 // Volleyball match state. The match is an event log (0 = point Left, 1 = point Right, 2 = serve
-// Left, 3 = serve Right, 4..7 = tie-break rule 0..3); everything else is replayed from it, so
+// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 8..11 = set goal 0..3); everything else is replayed from it, so
 // undo is just "drop the last event".
 // Tie-break rule (cap): 0 = win by 2, no limit. 1 = sudden death: at target-1 all the next point
 // wins. 2 / 3 = a hard cap: the first to reach target+1 / target+2 wins (so the tie-break lasts at
@@ -9,6 +9,7 @@ import Toybox.Lang;
 class Match {
     static const SETS_TO_WIN = 3;
     static const MAX_EVENTS = 400;
+    static const GOALS = [10, 15, 21, 25] as Array<Number>;   // points to win a set
 
     var events as Array<Number> = [] as Array<Number>;
     var pts as Array<Number> = [0, 0] as Array<Number>;   // current set points [Left, Right]
@@ -18,14 +19,17 @@ class Match {
     var over as Boolean = false;
     var cap as Number = 0;       // tie-break rule in force (0 = win by 2 only)
     var capChosen as Boolean = false; // a rule was picked this match, so don't ask again
+    var goalIdx as Number = 3;   // index into GOALS (25 by default)
+    var goalChosen as Boolean = false;
 
     function initialize() {
         replay();
     }
 
-    // Points needed to win the set being played: 25, or 15 in the deciding set.
-    static function target(setsA as Number, setsB as Number) as Number {
-        return (setsA + setsB == 2 * SETS_TO_WIN - 2) ? 15 : 25;
+    // Points needed to win the set being played: the chosen goal (25 by default), or at most 15 in
+    // the deciding set.
+    static function target(setsA as Number, setsB as Number, goal as Number) as Number {
+        return (setsA + setsB == 2 * SETS_TO_WIN - 2 && goal > 15) ? 15 : goal;
     }
 
     // A set is won at the target with a two-point lead; with a cap n > 0 it is also won by whoever
@@ -55,7 +59,7 @@ class Match {
     }
 
     function currentTarget() as Number {
-        return Match.target(sets[0], sets[1]);
+        return Match.target(sets[0], sets[1], GOALS[goalIdx]);
     }
 
     function setNumber() as Number {
@@ -80,6 +84,14 @@ class Match {
         }
     }
 
+    function setGoal(n as Number) as Void {
+        if (events.size() < MAX_EVENTS) {
+            events.add(8 + n);
+            goalIdx = n;
+            goalChosen = true;
+        }
+    }
+
     function setServe(team as Number) as Void {
         if (events.size() < MAX_EVENTS) {
             events.add(2 + team);
@@ -97,13 +109,18 @@ class Match {
         return true;
     }
 
-    // New match; keeps the tie-break rule.
+    // New match; keeps the tie-break rule and the set goal.
     function reset() as Void {
         var keep = cap;
         var chosen = capChosen;
+        var gKeep = goalIdx;
+        var gChosen = goalChosen;
         events = [] as Array<Number>;
         if (chosen) {
             events.add(4 + keep);
+        }
+        if (gChosen) {
+            events.add(8 + gKeep);
         }
         replay();
     }
@@ -117,9 +134,14 @@ class Match {
         over = false;
         cap = 0;
         capChosen = false;
+        goalIdx = 3;
+        goalChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
-            if (e >= 4) {
+            if (e >= 8) {
+                goalIdx = e - 8;
+                goalChosen = true;
+            } else if (e >= 4) {
                 cap = e - 4;
                 capChosen = true;
             } else if (e >= 2) {
@@ -157,7 +179,7 @@ class Match {
         if (ok) {
             for (var i = 0; i < data.size(); i++) {
                 var v = data[i];
-                if (!(v instanceof Number) || v < 0 || v > 7) {
+                if (!(v instanceof Number) || v < 0 || v > 11) {
                     ok = false;
                     break;
                 }
