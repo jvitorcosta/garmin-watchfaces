@@ -1,5 +1,5 @@
 // Volleyball match state. The match is an event log (0 = point Left, 1 = point Right, 2 = serve
-// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 8..13 = set goal 0..5); everything else is replayed from it, so
+// Left, 3 = serve Right, 4..7 = tie-break rule 0..3, 16..40 = set goal 1..25 (8..15 were an older goal list and are ignored)); everything else is replayed from it, so
 // undo is just "drop the last event".
 // Tie-break rule (cap): 0 = win by 2, no limit. 1 = sudden death: at target-1 all the next point
 // wins. 2 / 3 = a hard cap: the first to reach target+1 / target+2 wins (so the tie-break lasts at
@@ -9,7 +9,8 @@ import Toybox.Lang;
 class Match {
     static const SETS_TO_WIN = 3;
     static const MAX_EVENTS = 400;
-    static const GOALS = [7, 10, 12, 18, 21, 25] as Array<Number>;   // points to win a set
+    static const MAX_GOAL = 25;
+    static const DEFAULT_GOAL = 10;
 
     var events as Array<Number> = [] as Array<Number>;
     var pts as Array<Number> = [0, 0] as Array<Number>;   // current set points [Left, Right]
@@ -19,7 +20,8 @@ class Match {
     var over as Boolean = false;
     var cap as Number = 0;       // tie-break rule in force (0 = win by 2 only)
     var capChosen as Boolean = false; // a rule was picked this match, so don't ask again
-    var goalIdx as Number = 5;   // index into GOALS (25 by default)
+    var goal as Number = 10;     // points to win a set (1..25, 10 by default)
+    var setLog as Array<Number> = [] as Array<Number>;  // who scored each point of the set in play
     var goalChosen as Boolean = false;
 
     function initialize() {
@@ -59,7 +61,7 @@ class Match {
     }
 
     function currentTarget() as Number {
-        return Match.target(sets[0], sets[1], GOALS[goalIdx]);
+        return Match.target(sets[0], sets[1], goal);
     }
 
     function setNumber() as Number {
@@ -85,9 +87,9 @@ class Match {
     }
 
     function setGoal(n as Number) as Void {
-        if (events.size() < MAX_EVENTS) {
-            events.add(8 + n);
-            goalIdx = n;
+        if (n >= 1 && n <= MAX_GOAL && events.size() < MAX_EVENTS) {
+            events.add(15 + n);
+            goal = n;
             goalChosen = true;
         }
     }
@@ -113,14 +115,14 @@ class Match {
     function reset() as Void {
         var keep = cap;
         var chosen = capChosen;
-        var gKeep = goalIdx;
+        var gKeep = goal;
         var gChosen = goalChosen;
         events = [] as Array<Number>;
         if (chosen) {
             events.add(4 + keep);
         }
         if (gChosen) {
-            events.add(8 + gKeep);
+            events.add(15 + gKeep);
         }
         replay();
     }
@@ -134,13 +136,16 @@ class Match {
         over = false;
         cap = 0;
         capChosen = false;
-        goalIdx = 5;
+        goal = DEFAULT_GOAL;
+        setLog = [] as Array<Number>;
         goalChosen = false;
         for (var i = 0; i < log.size(); i++) {
             var e = log[i];
-            if (e >= 8) {
-                goalIdx = e - 8;
+            if (e >= 16) {
+                goal = e - 15;
                 goalChosen = true;
+            } else if (e >= 8) {
+                continue;
             } else if (e >= 4) {
                 cap = e - 4;
                 capChosen = true;
@@ -154,6 +159,7 @@ class Match {
 
     private function apply(team as Number) as Number {
         pts[team] = pts[team] + 1;
+        setLog.add(team);
         serve = team;
         if (!Match.setWon(pts[0], pts[1], currentTarget(), cap)) {
             return 0;
@@ -162,6 +168,7 @@ class Match {
         history.add([pts[0], pts[1]] as Array<Number>);
         sets[winner] = sets[winner] + 1;
         pts = [0, 0] as Array<Number>;
+        setLog = [] as Array<Number>;
         if (sets[winner] >= SETS_TO_WIN) {
             over = true;
             return 2;
@@ -179,7 +186,7 @@ class Match {
         if (ok) {
             for (var i = 0; i < data.size(); i++) {
                 var v = data[i];
-                if (!(v instanceof Number) || v < 0 || v > 13) {
+                if (!(v instanceof Number) || v < 0 || v > 40) {
                     ok = false;
                     break;
                 }

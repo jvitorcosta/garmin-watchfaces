@@ -57,7 +57,7 @@ function pushMatchMenu(match as Match) as Void {
     var menu = new WatchUi.CustomMenu(58, Graphics.COLOR_BLACK, {:title => title, :titleItemHeight => 40});
     menu.addItem(new MenuRow(:serveUs, "Serve blue", null, VolleyView.BLUE, match.serve == 0));
     menu.addItem(new MenuRow(:serveThem, "Serve red", null, VolleyView.RED, match.serve == 1));
-    menu.addItem(new MenuRow(:goal, "Points to win", "" + Match.GOALS[match.goalIdx], null, false));
+    menu.addItem(new MenuRow(:goal, "Points to win", "" + match.goal, null, false));
     menu.addItem(new MenuRow(:tieBreak, "Tie-break", Match.capLabel(match.cap), null, false));
     menu.addItem(new MenuRow(:newMatch, "New match", null, null, false));
     WatchUi.pushView(menu, new VolleyMenuDelegate(match), WatchUi.SLIDE_UP);
@@ -164,8 +164,8 @@ class WheelDelegate extends WatchUi.BehaviorDelegate {
     function accept() as Void {
         var n = view.index;
         if (view.kind == :goal) {
-            if (n != match.goalIdx) {
-                match.setGoal(n);
+            if (n + 1 != match.goal) {
+                match.setGoal(n + 1);
             }
         } else if (n != match.cap || !match.capChosen) {
             match.setCap(n);
@@ -185,10 +185,10 @@ function pushWheel(match as Match, kind as Symbol, title as String, labels as Ar
 
 function pushGoalPicker(match as Match) as Void {
     var l = [] as Array<String>;
-    for (var i = 0; i < Match.GOALS.size(); i++) {
-        l.add("" + Match.GOALS[i]);
+    for (var i = 1; i <= Match.MAX_GOAL; i++) {
+        l.add("" + i);
     }
-    pushWheel(match, :goal, "POINTS TO WIN", l, match.goalIdx);
+    pushWheel(match, :goal, "POINTS TO WIN", l, match.goal - 1);
 }
 
 function pushCapPicker(match as Match) as Void {

@@ -36,6 +36,7 @@ class VolleyView extends WatchUi.View {
         dc.setPenWidth(2);
         dc.drawLine(w / 2, h * 22 / 100, w / 2, h);
 
+        drawSpine(dc, w, h);
         drawTeam(dc, 0, w / 4);
         drawTeam(dc, 1, w * 3 / 4);
 
@@ -82,6 +83,24 @@ class VolleyView extends WatchUi.View {
         var top = h - (h * level).toNumber();
         dc.setColor(color, color);
         dc.fillRectangle(x, top, half, h - top);
+    }
+
+    // Down the divider, one dot per point of this set, oldest at the top and on the side of the team
+    // that scored it, so a run of points shows as a stack on one side. Shows the last 12.
+    private function drawSpine(dc as Graphics.Dc, w as Number, h as Number) as Void {
+        var log = match.setLog;
+        var n = log.size() > 12 ? 12 : log.size();
+        var first = log.size() - n;
+        for (var i = 0; i < n; i++) {
+            var team = log[first + i];
+            var x = w / 2 + (team == 0 ? -9 : 9);
+            var y = h * 29 / 100 + i * 11;
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(x, y, 4);
+            dc.setColor(team == 0 ? BLUE_DARK : RED_DARK, Graphics.COLOR_TRANSPARENT);
+            dc.setPenWidth(1);
+            dc.drawCircle(x, y, 4);
+        }
     }
 
     // Set dots (filled = won), big white points, serve marker under the points.

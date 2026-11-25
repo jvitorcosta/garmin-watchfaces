@@ -9,6 +9,13 @@ function addPoints(m as Match, team as Number, n as Number) as Void {
     }
 }
 
+// A match played to 25 (the default goal is 10), like the matches these tests were written for.
+function to25() as Match {
+    var m = new Match();
+    m.setGoal(25);
+    return m;
+}
+
 // Alternate points so neither side reaches the target early.
 function tie(m as Match, n as Number) as Void {
     for (var i = 0; i < n; i++) {
@@ -19,7 +26,7 @@ function tie(m as Match, n as Number) as Void {
 
 (:test)
 function testSetTo25(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     addPoints(m, 0, 24);
     Test.assertEqual(m.sets[0], 0);
     Test.assertEqual(m.point(0), 1);
@@ -31,7 +38,7 @@ function testSetTo25(logger as Test.Logger) as Boolean {
 
 (:test)
 function testWinByTwo(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     tie(m, 24);                      // 24-24
     m.point(0);                      // 25-24: not over
     Test.assertEqual(m.sets[0], 0);
@@ -45,7 +52,7 @@ function testWinByTwo(logger as Test.Logger) as Boolean {
 
 (:test)
 function testFifthSetTo15(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     for (var i = 0; i < 2; i++) {
         addPoints(m, 0, 25);
         addPoints(m, 1, 25);
@@ -61,7 +68,7 @@ function testFifthSetTo15(logger as Test.Logger) as Boolean {
 
 (:test)
 function testMatchOverIgnoresPoints(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     addPoints(m, 0, 75);
     Test.assert(m.over);
     Test.assertEqual(m.point(1), -1);
@@ -71,7 +78,8 @@ function testMatchOverIgnoresPoints(logger as Test.Logger) as Boolean {
 (:test)
 function testUndo(logger as Test.Logger) as Boolean {
     var m = new Match();
-    Test.assert(!m.undo());
+    Test.assert(!m.undo());          // nothing to undo yet
+    m.setGoal(25);
     addPoints(m, 0, 25);             // set 1 to Us
     addPoints(m, 1, 3);
     Test.assert(m.undo());
@@ -87,7 +95,7 @@ function testUndo(logger as Test.Logger) as Boolean {
 
 (:test)
 function testServeFollowsRally(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     Test.assertEqual(m.serve, 0);
     m.point(1);
     Test.assertEqual(m.serve, 1);
@@ -100,7 +108,7 @@ function testServeFollowsRally(logger as Test.Logger) as Boolean {
 
 (:test)
 function testStorageRoundTrip(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     addPoints(m, 0, 25);
     addPoints(m, 1, 7);
     var n = new Match();
@@ -129,7 +137,7 @@ function testTieBreakCaps(logger as Test.Logger) as Boolean {
 
 (:test)
 function testTieBreakIsLogged(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     m.setCap(1);
     tie(m, 24);                                    // 24-24
     Test.assertEqual(m.point(0), 1);               // next point wins the set
@@ -144,7 +152,7 @@ function testTieBreakIsLogged(logger as Test.Logger) as Boolean {
 
 (:test)
 function testTieBreakAskOnce(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     addPoints(m, 0, 23);
     addPoints(m, 1, 22);
     Test.assert(!m.needsTieBreakAsk());   // 23-22
@@ -162,7 +170,7 @@ function testTieBreakAskOnce(logger as Test.Logger) as Boolean {
 
 (:test)
 function testTieBreakAskInDecidingSet(logger as Test.Logger) as Boolean {
-    var m = new Match();
+    var m = to25();
     for (var i = 0; i < 2; i++) {
         addPoints(m, 0, 25);
         addPoints(m, 1, 25);
@@ -177,16 +185,16 @@ function testTieBreakAskInDecidingSet(logger as Test.Logger) as Boolean {
 (:test)
 function testSetGoal(logger as Test.Logger) as Boolean {
     var m = new Match();
-    m.setGoal(0);                         // sets to 7
+    Test.assertEqual(m.currentTarget(), 10);   // default goal
+    m.setGoal(7);
     Test.assertEqual(m.currentTarget(), 7);
     addPoints(m, 0, 7);
-    Test.assertEqual(m.sets[0], 1);       // won at 7-0
-    Test.assertEqual(m.currentTarget(), 7);
+    Test.assertEqual(m.sets[0], 1);            // won at 7-0
     for (var u = 0; u < 8; u++) {
-        m.undo();                         // 7 points, then the goal change itself
+        m.undo();                              // 7 points, then the goal change itself
     }
-    Test.assertEqual(m.currentTarget(), 25);
-    m.setGoal(4);                         // 21, deciding set 15
+    Test.assertEqual(m.currentTarget(), 10);
+    m.setGoal(21);                             // deciding set 15
     for (var i = 0; i < 2; i++) {
         addPoints(m, 0, 21);
         addPoints(m, 1, 21);
@@ -194,7 +202,25 @@ function testSetGoal(logger as Test.Logger) as Boolean {
     Test.assertEqual(m.currentTarget(), 15);
     m.reset();
     Test.assertEqual(m.currentTarget(), 21);   // a new match keeps the goal
-    m.setGoal(2);                         // sets to 12, deciding set 12 too
+    m.setGoal(12);
     Test.assertEqual(m.currentTarget(), 12);
+    m.setGoal(0);                              // out of range: ignored
+    m.setGoal(26);
+    Test.assertEqual(m.currentTarget(), 12);
+    return true;
+}
+
+(:test)
+function testSetLog(logger as Test.Logger) as Boolean {
+    var m = new Match();
+    m.point(0);
+    m.point(1);
+    m.point(1);
+    Test.assertEqual(m.setLog.size(), 3);
+    Test.assertEqual(m.setLog[2], 1);
+    m.undo();
+    Test.assertEqual(m.setLog.size(), 2);
+    addPoints(m, 0, 9);                        // wins the set at 10: the log starts over
+    Test.assertEqual(m.setLog.size(), 0);
     return true;
 }
