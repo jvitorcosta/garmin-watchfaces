@@ -11,7 +11,7 @@ OUT = os.path.join(ROOT, "volleyscore", "resources", "gen")
 
 FONTS = [("bebas_score", 128, "0123456789"),
          ("bebas_title", 100, "ABCDEFGHIJKLMNOPQRSTUVWXYZ "),
-         ("bebas_label", 30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -\u00b7")]
+         ("bebas_label", 30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -\u00b7+")]
 
 
 def bmfont(name, size, chars):
