@@ -48,41 +48,49 @@ def gen_xml():
     return "<resources>\n<fonts>\n" + fonts + "\n</fonts>\n</resources>\n"
 
 
+GLYPHS = {"7": ["111", "001", "010", "010", "010"], "9": ["111", "101", "111", "001", "111"]}
+
+
 def icon():
-    """The 40 x 40 launcher icon: a pixel-art beach volleyball. Three ball-sized circles shifted in
-    three directions cut the ball into panels, painted white, yellow, blue and red (the beach ball
-    look); a navy outline and seams, a shaded lower right and a small highlight. No anti-aliasing."""
+    """The 40 x 40 launcher icon: a pixel-art scoreboard. A rounded blue and red split (the app's
+    two sides) with a white divider, a white ribbon on top and a 7 and a 9 in white with a navy
+    outline. No anti-aliasing, so it stays crisp."""
     n = 40
-    c = (n - 1) / 2.0
-    r = 18.6
     navy = (11, 37, 64, 255)
-    pal = {0: (252, 252, 252), 1: (255, 205, 40), 2: (46, 155, 255), 3: (229, 52, 58)}
-    centres = [(-13.0, 2.0), (13.0, 2.0), (0.0, -15.0)]
+    white = (252, 252, 252, 255)
+    blue = (46, 155, 255, 255)
+    red = (229, 52, 58, 255)
     img = Image.new("RGBA", (n, n), (0, 0, 0, 0))
     px = img.load()
-    for y in range(n):
-        for x in range(n):
-            dx, dy = x - c, y - c
-            d = (dx * dx + dy * dy) ** 0.5
-            if d > r:
-                continue
-            dist = [((dx - sx) ** 2 + (dy - sy) ** 2) ** 0.5 for sx, sy in centres]
-            inside = [e < 19.0 for e in dist]
-            key = {(0, 0, 0): 0, (1, 0, 0): 2, (0, 1, 0): 2, (0, 0, 1): 1, (1, 1, 0): 0,
-                   (1, 0, 1): 3, (0, 1, 1): 3, (1, 1, 1): 1}[tuple(int(v) for v in inside)]
-            rgb = pal[key]
-            shade = dx * 0.6 + dy * 0.8
-            if shade > 8:
-                f = 0.84 if shade <= 14 else 0.7
-                rgb = tuple(int(v * f) for v in rgb)
-            col = rgb + (255,)
-            if any(abs(e - 19.0) < 0.75 for e in dist):
-                col = navy
-            if (dx + 9) ** 2 + (dy + 9) ** 2 < 3:
-                col = (255, 255, 255, 255)
-            if d > r - 1.6:
-                col = navy
-            px[x, y] = col
+
+    def rounded(x0, y0, x1, y1, rad, fill):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                cx = min(max(x, x0 + rad), x1 - rad)
+                cy = min(max(y, y0 + rad), y1 - rad)
+                d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+                if d <= rad + 0.4:
+                    px[x, y] = navy if d > rad - 0.6 else fill(x)
+
+    def glyph(ch, x0, y0, s, col):
+        for j, row in enumerate(GLYPHS[ch]):
+            for i, bit in enumerate(row):
+                if bit == "1":
+                    for a in range(s):
+                        for b in range(s):
+                            px[x0 + i * s + a, y0 + j * s + b] = col
+
+    rounded(3, 5, 36, 34, 5, lambda x: blue if x < 20 else red)
+    for x in (19, 20):
+        for y in range(7, 33):
+            px[x, y] = white
+    rounded(11, 3, 28, 9, 3, lambda x: white)
+    for ch, x0 in (("7", 6), ("9", 24)):
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                if dx or dy:
+                    glyph(ch, x0 + dx, 13 + dy, 4, navy)
+        glyph(ch, x0, 13, 4, white)
     return img
 
 
