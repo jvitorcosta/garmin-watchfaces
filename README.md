@@ -15,7 +15,7 @@ There is also an app, not a face:
 
 | App | What it does |
 |---|---|
-| [`volleyscore/`](volleyscore) | **Volley Score**: a volleyball scoreboard (sets to 25, fifth to 15, win by 2) with set tally, undo, serve marker and haptics; it keeps the score if you leave the app |
+| [`volleyscore/`](volleyscore) | **Volley Score**: a volleyball scoreboard (sets to 25, fifth to 15, win by 2) split blue/red screen with set tally, undo, serve marker, tie-break rules and haptics; it keeps the score if you leave the app |
 
 ## Why I built them
 

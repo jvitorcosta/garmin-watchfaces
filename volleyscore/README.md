@@ -2,19 +2,25 @@
 
 A volleyball scoreboard for the Forerunner 255. Sideloaded only, not published to the Connect IQ Store.
 
-- Sets go to 25, the fifth to 15, always win by 2; first to 3 sets wins the match.
-- The serve marker (yellow dot) follows the team that scored the last point; change it from the menu.
+![Volley Score in the Forerunner 255 simulator](../docs/images/volleyscore-sim.png)
+
+- Split screen: light blue on the left, red on the right, big white points; three dots above each score are the sets won (filled = won).
+- Sets go to 25, the fifth to 15; first to 3 sets wins the match.
+- Tie-break (menu): **Win by 2** (default), **Sudden death** (tied one point short of the target, the next point wins), **Max +1** (first to target + 1) or **Max +2** (first to target + 2). It applies from that point on and a new match keeps the choice.
+- The serve marker (small white ball under the score) follows the team that scored the last point; change it from the menu.
 - A short buzz per point, a double buzz when a set ends, a long double buzz when the match ends.
 - The score is saved after every change, so leaving the app (or the watch sleeping) never loses the match.
 
 ## Buttons
 
+Laid out like the screen: left buttons for the left team, right button for the right team.
+
 | Button | Does |
 |---|---|
-| UP | point for **Us** (top half) |
-| DOWN | point for **Them** (bottom half) |
-| START | undo the last action (as many times as you like, even back into a finished set) |
-| hold UP | menu: serve Us / serve Them / new match |
+| UP | point for the **left** (blue) team |
+| START | point for the **right** (red) team |
+| DOWN | undo the last action (as many times as you like, even back into a finished set) |
+| hold UP | menu: serve blue / serve red / tie-break / new match |
 | BACK | leave the app; reopen it and the score is still there |
 
 ## Build
@@ -27,7 +33,7 @@ monkeyc -d fr255 -f volleyscore/monkey.jungle -o volleyscore/bin/VolleyScore.prg
 
 ## Tests
 
-The match rules (set to 25, win by 2, fifth set to 15, undo across sets, serve, saving) have unit tests in `source/Tests.mc`. Open the simulator (`connectiq`), then:
+The match rules (set to 25, win by 2, tie-break caps, fifth set to 15, undo across sets, serve, saving) have unit tests in `source/Tests.mc`. Open the simulator (`connectiq`), then:
 
 ```bash
 monkeyc -d fr255 -f volleyscore/monkey.jungle -o volleyscore/bin/VolleyTest.prg -y <your developer_key.der> --unit-test
@@ -42,4 +48,4 @@ monkeydo volleyscore/bin/VolleyTest.prg fr255 /t
 
 ## How it works
 
-`Match.mc` keeps the match as a list of events (point Us, point Them, serve change) and replays it to get the score, so undo is just dropping the last event and the saved state is that list. `VolleyView.mc` draws it, `VolleyDelegate.mc` handles the buttons, menu and haptics.
+`Match.mc` keeps the match as a list of events (point left, point right, serve change, tie-break rule) and replays it to get the score, so undo is just dropping the last event and the saved state is that list. `VolleyView.mc` draws it, `VolleyDelegate.mc` handles the buttons, menu and haptics.
